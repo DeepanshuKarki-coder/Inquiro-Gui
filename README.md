@@ -7,14 +7,14 @@ Welcome to **Inquiro** – a simple, Java & MySQL powered Q&A platform where use
 
 ## 📁 Project Structure
 
-/Inquiro-Gui
-│
-├── /Backend - Java code for database connection & logic 🗄️
-├── /Frontend - Java Swing UI files for the interactive user interface 🎨
-├── /sql - Database schema & setup scripts 🛠️
-├── /ui-design - Static UI designs, mockups, wireframes 🖌️📐
-├── README.md - You’re here! Project overview and instructions 📖
-└── .gitignore - Files and folders to ignore in Git ❌
+📁 Inquiro-GUI  
+├── 📂 Backend         → Java code for database connection & logic  
+├── 📂 Frontend        → Java Swing UI files for the interactive user interface 😎  
+├── 📂 sql             → Database schema & setup scripts 🛠️  
+├── 📂 ui-design       → Static UI designs, mockups, wireframes ✏️🔺  
+├── 📄 README.md       → You're here! Project overview and instructions 📖  
+├── 📄 .gitignore      → Files and folders to ignore in Git ❌  
+
 
 ---
 
