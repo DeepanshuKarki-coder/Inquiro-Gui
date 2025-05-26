@@ -1,4 +1,4 @@
-package src.Backend;
+package Backend;
 
 import java.io.FileWriter;
 import java.io.IOException;

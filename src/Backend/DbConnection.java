@@ -1,4 +1,4 @@
-package src.Backend;
+package Backend;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
