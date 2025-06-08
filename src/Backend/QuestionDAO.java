@@ -66,49 +66,57 @@ public class QuestionDAO {
     }
 
     // View questions and comments
-    public static List<String> getQuestions() {
-        List<String> results = new ArrayList<>();
+    public static List<QuestionModel> getQuestions() {
+        List<QuestionModel> questions = new ArrayList<>();
 
-        String questionQuery = "SELECT q.id, u.name, q.question FROM question q JOIN user u ON q.user_id = u.id";
-        String commentQuery = "SELECT u.name, c.comments FROM comments c JOIN user u ON c.user_id = u.id WHERE c.question_id = ?";
+        String questionQuery = "SELECT q.id, q.question, q.user_id, u.name " +
+                "FROM question q JOIN user u ON q.user_id = u.id";
+
+        String commentQuery = "SELECT c.id, c.comments, c.user_id, u.name AS user_name " +
+                "FROM comments c JOIN user u ON c.user_id = u.id " +
+                "WHERE c.question_id = ?";
 
         try (Connection connection = DbConnection.getConnection();
-             Statement questionStmt = connection != null ? connection.createStatement() : null;
-             ResultSet questionRs = questionStmt != null ? questionStmt.executeQuery(questionQuery) : null) {
+             PreparedStatement questionStmt = connection.prepareStatement(questionQuery)) {
 
             if (connection == null) {
                 System.out.println("Database connection failed");
-                return results;
+                return questions;
             }
 
-            while (questionRs != null && questionRs.next()) {
-                int question_id = questionRs.getInt("id");
-                String u_name = questionRs.getString("name");
-                String q_question = questionRs.getString("question");
-                StringBuilder entry = new StringBuilder();
-                entry.append("QID ").append(question_id)
-                        .append(" by ").append(u_name)
-                        .append(": ").append(q_question);
+            try (ResultSet questionRs = questionStmt.executeQuery()) {
+                while (questionRs.next()) {
+                    int questionId = questionRs.getInt("id");
+                    String questionText = questionRs.getString("question");
+                    int userId = questionRs.getInt("user_id");
+                    String userName = questionRs.getString("name");
 
-                try (PreparedStatement commentStmt = connection.prepareStatement(commentQuery)) {
-                    commentStmt.setInt(1, question_id);
-                    try (ResultSet commentRs = commentStmt.executeQuery()) {
-                        while (commentRs.next()) {
-                            entry.append("\n    ↳ ")
-                                    .append(commentRs.getString("name"))
-                                    .append(": ")
-                                    .append(commentRs.getString("comments"));
+                    QuestionModel question = new QuestionModel(questionId, questionText, userId, userName);
+
+                    // Get comments for this question
+                    try (PreparedStatement commentStmt = connection.prepareStatement(commentQuery)) {
+                        commentStmt.setInt(1, questionId);
+                        try (ResultSet commentRs = commentStmt.executeQuery()) {
+                            while (commentRs.next()) {
+                                int commentId = commentRs.getInt("id");
+                                String commentText = commentRs.getString("comments");
+                                int commentUserId = commentRs.getInt("user_id");
+                                String commentUserName = commentRs.getString("user_name");
+
+                                CommentModel comment = new CommentModel(commentId, commentText, questionId, commentUserId, commentUserName);
+                                question.addComment(comment);
+                            }
                         }
                     }
-                }
 
-                results.add(entry.toString());
+                    questions.add(question);
+                }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return results;
+        return questions;
     }
 }

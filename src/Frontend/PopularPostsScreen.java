@@ -1,6 +1,8 @@
 package Frontend;
 
+import Backend.CommentModel;
 import Backend.QuestionDAO;
+import Backend.QuestionModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -79,14 +81,14 @@ public class PopularPostsScreen extends JFrame {
 
     private void loadPosts() {
         postsPanel.removeAll();
-        List<String> questions = QuestionDAO.getQuestions();
+        List<QuestionModel> questions = QuestionDAO.getQuestions();
 
         if (questions.isEmpty()) {
             JLabel noPostsLabel = new JLabel("No posts available yet.", JLabel.CENTER);
             noPostsLabel.setFont(new Font("Arial", Font.ITALIC, 16));
             postsPanel.add(noPostsLabel);
         } else {
-            for (String question : questions) {
+            for (QuestionModel question : questions) {
                 JPanel postPanel = createPostPanel(question);
                 postsPanel.add(postPanel);
                 postsPanel.add(Box.createVerticalStrut(10));
@@ -97,7 +99,7 @@ public class PopularPostsScreen extends JFrame {
         postsPanel.repaint();
     }
 
-    private JPanel createPostPanel(String questionText) {
+    private JPanel createPostPanel(QuestionModel question) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.GRAY),
@@ -105,52 +107,57 @@ public class PopularPostsScreen extends JFrame {
         ));
         panel.setBackground(Color.WHITE);
 
-        // Parse question ID
-        String[] lines = questionText.split("\n");
-        String firstLine = lines[0];
-        int qid = -1;
-        try {
-            String qidStr = firstLine.substring(firstLine.indexOf("QID ") + 4, firstLine.indexOf(" by"));
-            qid = Integer.parseInt(qidStr);
-        } catch (Exception e) {
-            // handle parse failure
+        // Build question + comments in formatted string
+        StringBuilder content = new StringBuilder();
+        content.append("QID ").append(question.getId())
+                .append(" by ").append(question.getUserName())
+                .append(": ").append(question.getQuestion());
+
+        for (CommentModel comment : question.getComments()) {
+            content.append("\n    ↳ ")
+                    .append(comment.getUserName())
+                    .append(": ")
+                    .append(comment.getComment());
         }
 
-        JTextArea textArea = new JTextArea(questionText);
+        JTextArea textArea = new JTextArea(content.toString());
         textArea.setEditable(false);
         textArea.setFont(new Font("SansSerif", Font.PLAIN, 13));
         textArea.setBackground(Color.WHITE);
         textArea.setBorder(new EmptyBorder(0, 0, 10, 0));
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
         panel.add(textArea, BorderLayout.CENTER);
 
-        if (qid != -1) {
-            final int questionId = qid;
-            RoundedButton commentBtn = new RoundedButton("Add Comment", 20);
-            commentBtn.setFont(new Font("Arial", Font.PLAIN, 13));
-            commentBtn.setBackground(new Color(50, 90, 90));
-            commentBtn.setForeground(Color.WHITE);
-            commentBtn.setFocusPainted(false);
-            commentBtn.setPreferredSize(new Dimension(120, 30));
-            commentBtn.addActionListener(e -> openCommentDialog(questionId));
+        RoundedButton commentBtn = new RoundedButton("Add Comment", 20);
+        commentBtn.setFont(new Font("Arial", Font.PLAIN, 13));
+        commentBtn.setBackground(new Color(50, 90, 90));
+        commentBtn.setForeground(Color.WHITE);
+        commentBtn.setFocusPainted(false);
+        commentBtn.setPreferredSize(new Dimension(120, 30));
+        commentBtn.addActionListener(e -> openCommentDialog(question.getId()));
 
-            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            buttonPanel.setBackground(Color.WHITE);
-            buttonPanel.add(commentBtn);
-            panel.add(buttonPanel, BorderLayout.SOUTH);
-        }
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.add(commentBtn);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
         return panel;
     }
 
-    private void openCommentDialog(int questionId) {
-        String comment = JOptionPane.showInputDialog(this, "Enter your comment:", "Add Comment", JOptionPane.PLAIN_MESSAGE);
 
-        if (comment != null && !comment.trim().isEmpty()) {
-            QuestionDAO.addComment(Session.currentUserId, questionId, comment.trim());
+
+    private void openCommentDialog(int questionId) {
+        String commentText = JOptionPane.showInputDialog(this, "Enter your comment:", "Add Comment", JOptionPane.PLAIN_MESSAGE);
+
+        if (commentText != null && !commentText.trim().isEmpty()) {
+            QuestionDAO.addComment(Session.currentUserId, questionId, commentText.trim());
             JOptionPane.showMessageDialog(this, "Comment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             loadPosts(); // Refresh posts to show new comment
         }
     }
+
+
 
     private void goBackToDashboard() {
         dispose();

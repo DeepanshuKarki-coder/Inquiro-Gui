@@ -132,10 +132,12 @@ public class LoginScreen extends JFrame {
             return;
         }
 
-        int userId = UserDAO.login(username, password);
-        if (userId != -1) {
-            Session.currentUserId = userId;
-            Session.currentUsername = username;
+        UserModel userId = UserDAO.login(username, password);
+        if (userId != null) {
+            Session.currentUserId = userId.getId();
+            Session.currentUsername = userId.getName();
+            Session.currentUserBranch = userId.getBranch();
+            Session.currentUserSection = userId.getSection();
             dispose();
             new DashboardScreen();
         } else {
