@@ -86,4 +86,60 @@ public class UserDAO {
 
         return null;
     }
+
+    public static boolean changePassword(int userID, String oldPassword, String newPassword) {
+        if (oldPassword == null || oldPassword.trim().isEmpty() ||
+                newPassword == null || newPassword.trim().isEmpty() || userID <= 0) {
+            return false;
+        }
+
+        try (Connection connection = DbConnection.getConnection()) {
+            if (connection == null) {
+                System.out.println("Database connection failed");
+                return false;
+            }
+
+            // First, check if oldPassword is correct
+            String checkQuery = "SELECT password FROM user WHERE id=?";
+            try (PreparedStatement checkStmt = connection.prepareStatement(checkQuery)) {
+                checkStmt.setInt(1, userID);
+                try (ResultSet resultSet = checkStmt.executeQuery()) {
+                    if (resultSet.next()) {
+                        String currentPassword = resultSet.getString("password");
+
+                        // CRITICAL: Verify the old password matches
+                        if (!currentPassword.equals(oldPassword)) {
+                            System.out.println("Old password is incorrect");
+                            return false;
+                        }
+
+                        // Old password is correct, now update to new password
+                        String updateQuery = "UPDATE user SET password=? WHERE id=?";
+                        try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
+                            updateStmt.setString(1, newPassword);
+                            updateStmt.setInt(2, userID);
+                            int rowsAffected = updateStmt.executeUpdate();
+
+                            if (rowsAffected > 0) {
+                                System.out.println("Password changed successfully");
+                                Logger.log("User_id: " + userID + " changed password successfully");
+                                return true;
+                            } else {
+                                System.out.println("Password change failed - no rows affected");
+                                return false;
+                            }
+                        }
+                    } else {
+                        System.out.println("User not found");
+                        return false;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error changing password: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

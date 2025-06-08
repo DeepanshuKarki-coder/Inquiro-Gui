@@ -7,7 +7,7 @@ import java.sql.Connection;
 public class DbConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/guvi?useSSL=false&allowPublicKeyRetrieval=true";
     private static final String USER = "root";
-    private static final String PASSWORD = "Shrinkydonkey@123";
+    private static final String PASSWORD = "";
 
     public static Connection getConnection() {
         try {

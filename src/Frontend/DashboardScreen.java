@@ -63,20 +63,9 @@ public class DashboardScreen extends JFrame {
         styleButton(newPostBtn);
         mainPanel.add(newPostBtn);
 
-        // Logout Button (bottom-right)
-        RoundedButton logoutBtn = new RoundedButton("Logout", 20);
-        logoutBtn.setBounds(390, 320, 75, 25);
-        logoutBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        logoutBtn.setBackground(new Color(50, 90, 90));
-        logoutBtn.setForeground(Color.WHITE);
-        logoutBtn.setFocusPainted(false);
-        logoutBtn.setBorder(BorderFactory.createEmptyBorder());
-        mainPanel.add(logoutBtn);
-
         // Action listeners
         popularPostsBtn.addActionListener(e -> openPopularPosts());
         newPostBtn.addActionListener(e -> openNewPost());
-        logoutBtn.addActionListener(e -> logout());
     }
 
     private void styleButton(JButton button) {
@@ -100,14 +89,5 @@ public class DashboardScreen extends JFrame {
     private void openProfileScreen() {
         dispose();
         new ProfileScreen();
-    }
-
-    private void logout() {
-        Session.currentUserId = -1;
-        Session.currentUsername = "";
-        Session.currentUserBranch = "";
-        Session.currentUserSection = "";
-        dispose();
-        new ForumApp.HomeScreen();
     }
 }
