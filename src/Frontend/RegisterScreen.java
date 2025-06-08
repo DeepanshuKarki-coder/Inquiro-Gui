@@ -138,8 +138,8 @@ public class RegisterScreen extends JFrame {
             return;
         }
 
-        if (password.length() < 4) {
-            JOptionPane.showMessageDialog(this, "Password must be at least 4 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+        if (password.length() < 6) {
+            JOptionPane.showMessageDialog(this, "Password must be at least 6 characters!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
