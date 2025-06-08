@@ -18,6 +18,24 @@ public class DashboardScreen extends JFrame {
     private void initComponents() {
         JPanel backgroundPanel = new JPanel(null);
         backgroundPanel.setBackground(new Color(230, 240, 250)); // Light background
+
+        // Added a profile icon
+        ImageIcon icon = new ImageIcon(getClass().getResource("/Pics/ProfilePicture.jpg"));
+        Image image = icon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(image);
+
+        JLabel iconLabel = new JLabel(scaledIcon);
+        iconLabel.setBounds(620, 10, 32, 32);
+        iconLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Add hand cursor
+        backgroundPanel.add(iconLabel);
+
+        // Open ProfileScreen when icon is clicked
+        iconLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                openProfileScreen();
+            }
+        });
+
         setContentPane(backgroundPanel);
 
         // Bigger and more centered panel
@@ -79,9 +97,16 @@ public class DashboardScreen extends JFrame {
         new NewPostScreen();
     }
 
+    private void openProfileScreen() {
+        dispose();
+        new ProfileScreen();
+    }
+
     private void logout() {
         Session.currentUserId = -1;
         Session.currentUsername = "";
+        Session.currentUserBranch = "";
+        Session.currentUserSection = "";
         dispose();
         new ForumApp.HomeScreen();
     }

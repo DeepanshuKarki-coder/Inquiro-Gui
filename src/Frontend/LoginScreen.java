@@ -136,6 +136,8 @@ public class LoginScreen extends JFrame {
         if (userId != null) {
             Session.currentUserId = userId.getId();
             Session.currentUsername = userId.getName();
+            Session.currentUserBranch = userId.getBranch();
+            Session.currentUserSection = userId.getSection();
             dispose();
             new DashboardScreen();
         } else {
