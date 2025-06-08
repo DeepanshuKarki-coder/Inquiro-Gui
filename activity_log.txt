@@ -6,3 +6,5 @@
 [LOG] User ID 2 commented on QID 5: I am doing just fine
 [LOG] User ID 2 commented on QID 1: A human is a homosapean
 [LOG] User ID 2 added question: Is this project GUI Based?
+[LOG] User ID 1 added question: What is GUI?
+[LOG] User ID 1 commented on QID 1: Gui is in Java
