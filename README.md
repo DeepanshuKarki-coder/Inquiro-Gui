@@ -43,6 +43,17 @@ Welcome to **Inquiro** – a simple, Java & MySQL powered Q&A platform where use
 
 ---
 
+👥 Team
+
+| Name                                       | Role                  | Contribution Area                                      |
+|--------------------------------------------|-----------------------|--------------------------------------------------------|
+| Piyush Samal (@Piyush-Samal)               | Full-Stack Developer  | DAO Classes, Model Classes, Backend Logic              |
+| Deepanshu Karki (@DeepanshuKarki-coder)    | Frontend Developer    | Java Swing UI Implementation                           |
+| Chaman Kumar (@ChamanKumar-ui)             | UI/UX Designer        | Wireframes, Mockups, Design Specs                      |
+| Vinay Tiwari (@Vinay-Tiwari2005)           | Database Engineer     | SQL Schema, Database Setup, Integration in Java        |
+
+---
+
 ## 📞 Contact & Support
 
 Questions? Ideas? Bugs? Ping the team anytime! 📬
